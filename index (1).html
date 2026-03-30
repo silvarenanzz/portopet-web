@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Porto Pet — Cadastro do seu pet</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1B3A5C;
+    --navy-light: #234d7a;
+    --gold: #C9A84C;
+    --gold-light: #f0cc7a;
+    --cream: #FAF7F2;
+    --white: #FFFFFF;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --border: #e5e0d8;
+    --success: #0F6E56;
+    --error: #993C1D;
+    --radius: 12px;
+    --shadow: 0 4px 24px rgba(27,58,92,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    min-height: 100vh;
+    color: var(--text);
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--navy);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-logo {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: -0.5px;
+  }
+  .header-logo span { color: var(--gold); }
+  .header-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    margin-left: auto;
+  }
+
+  /* PROGRESS */
+  .progress-wrap {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+  }
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .progress-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--navy);
+  }
+  .progress-count {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--navy), var(--gold));
+    border-radius: 99px;
+    transition: width 0.5s ease;
+  }
+  .progress-steps {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .step-dot {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 99px;
+    transition: background 0.3s;
+  }
+  .step-dot.active { background: var(--navy); }
+  .step-dot.done { background: var(--gold); }
+
+  /* CONTAINER */
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 32px 20px 100px;
+  }
+
+  /* ETAPA */
+  .etapa { display: none; }
+  .etapa.active { display: block; animation: fadeIn 0.35s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .etapa-header {
+    margin-bottom: 28px;
+  }
+  .etapa-badge {
+    display: inline-block;
+    background: var(--navy);
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 99px;
+    margin-bottom: 12px;
+  }
+  .etapa-title {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--navy);
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .etapa-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* CARD DE PERGUNTA */
+  .pergunta-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .pergunta-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--navy);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.4;
+  }
+  .pergunta-num {
+    background: var(--navy);
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 500;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* INPUTS */
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+  }
+  input:focus, select:focus {
+    border-color: var(--navy);
+  }
+  input.error, select.error {
+    border-color: var(--error);
+  }
+  .error-msg {
+    font-size: 12px;
+    color: var(--error);
+    margin-top: 6px;
+    display: none;
+  }
+  .error-msg.show { display: block; }
+
+  /* SELECT wrapper */
+  .select-wrap {
+    position: relative;
+  }
+  .select-wrap::after {
+    content: '▾';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+    font-size: 12px;
+  }
+
+  /* RADIO / CHECKBOX */
+  .options-grid {
+    display: grid;
+    gap: 8px;
+  }
+  .options-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+
+  .option-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .option-item:hover { border-color: var(--navy); background: rgba(27,58,92,0.03); }
+  .option-item.selected {
+    border-color: var(--navy);
+    background: rgba(27,58,92,0.05);
+  }
+  .option-item.selected .option-circle {
+    background: var(--navy);
+    border-color: var(--navy);
+  }
+  .option-item.selected .option-circle::after { display: block; }
+  .option-circle {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .option-circle::after {
+    content: '';
+    width: 7px;
+    height: 7px;
+    background: var(--white);
+    border-radius: 50%;
+    display: none;
+  }
+  .option-square {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-size: 10px;
+    color: transparent;
+  }
+  .option-item.selected .option-square {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: var(--white);
+  }
+  .option-text { font-size: 13px; color: var(--text); line-height: 1.3; }
+
+  /* CAMPO CONDICIONAL */
+  .condicional { display: none; }
+  .condicional.show { display: block; animation: fadeIn 0.3s ease; }
+
+  /* NAVEGAÇÃO */
+  .nav-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 16px 20px;
+    display: flex;
+    gap: 12px;
+    max-width: 640px;
+    margin: 0 auto;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+  }
+  .btn {
+    padding: 13px 24px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .btn-voltar {
+    background: var(--cream);
+    color: var(--navy);
+    border: 1.5px solid var(--border);
+    flex: 1;
+  }
+  .btn-voltar:hover { background: var(--border); }
+  .btn-proximo {
+    background: var(--navy);
+    color: var(--white);
+    flex: 2;
+  }
+  .btn-proximo:hover { background: var(--navy-light); }
+  .btn-proximo:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* TELA DE SUCESSO */
+  .sucesso {
+    display: none;
+    text-align: center;
+    padding: 60px 20px;
+  }
+  .sucesso.active { display: block; animation: fadeIn 0.5s ease; }
+  .sucesso-icon {
+    font-size: 64px;
+    margin-bottom: 24px;
+  }
+  .sucesso-title {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+  .sucesso-desc {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 400px;
+    margin: 0 auto 32px;
+  }
+  .sucesso-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+    text-align: left;
+    box-shadow: var(--shadow);
+  }
+  .sucesso-card-title {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .sucesso-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text);
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .sucesso-item:last-child { border: none; }
+  .sucesso-check { color: var(--success); font-size: 16px; }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 8px 0 16px;
+  }
+
+  /* HINT */
+  .hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  @media (max-width: 480px) {
+    .options-grid.cols-2 { grid-template-columns: 1fr; }
+    .etapa-title { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">🚢 Porto<span>Pet</span></div>
+  <div class="header-sub">Cadastro do seu pet</div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-top">
+    <span class="progress-label" id="progress-label">Etapa 1 de 5</span>
+    <span class="progress-count" id="progress-count">Dados do tutor</span>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress-fill" style="width:20%"></div>
+  </div>
+  <div class="progress-steps">
+    <div class="step-dot active" id="dot-1"></div>
+    <div class="step-dot" id="dot-2"></div>
+    <div class="step-dot" id="dot-3"></div>
+    <div class="step-dot" id="dot-4"></div>
+    <div class="step-dot" id="dot-5"></div>
+  </div>
+</div>
+
+<!-- CONTAINER -->
+<div class="container">
+
+  <!-- ══════════════════════════════════════════
+       ETAPA 1 — DADOS DO TUTOR
+  ══════════════════════════════════════════ -->
+  <div class="etapa active" id="etapa-1">
+    <div class="etapa-header">
+      <div class="etapa-badge">Etapa 01</div>
+      <div class="etapa-title">Seus dados</div>
+      <div class="etapa-desc">Vamos começar com algumas informações suas para personalizar tudo.</div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">1</span>
+        Qual é o seu nome completo?
+      </div>
+      <input type="text" id="nome_completo" placeholder="Ex: Maria Silva" />
+      <div class="error-msg" id="err-nome">Por favor, informe seu nome.</div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">2</span>
+        Qual é o seu e-mail?
+      </div>
+      <input type="email" id="email" placeholder="Ex: maria@email.com" />
+      <div class="error-msg" id="err-email">Por favor, informe um e-mail válido.</div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">3</span>
+        Qual é o seu WhatsApp?
+      </div>
+      <input type="tel" id="whatsapp" placeholder="(11) 99999-9999" />
+      <div class="error-msg" id="err-whatsapp">Por favor, informe seu WhatsApp.</div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">4</span>
+        Qual é o seu CEP?
+      </div>
+      <input type="text" id="cep" placeholder="00000-000" maxlength="9" />
+      <div class="hint">📍 Usado para indicar clínicas parceiras na sua região</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       ETAPA 2 — DADOS DO PET
+  ══════════════════════════════════════════ -->
+  <div class="etapa" id="etapa-2">
+    <div class="etapa-header">
+      <div class="etapa-badge">Etapa 02</div>
+      <div class="etapa-title">Sobre o seu pet</div>
+      <div class="etapa-desc">Agora queremos conhecer quem vai receber todos os cuidados.</div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">5</span>
+        Qual é o nome do seu pet?
+      </div>
+      <input type="text" id="nome_pet" placeholder="Ex: Thor, Luna, Mel..." />
+      <div class="error-msg" id="err-nome_pet">Por favor, informe o nome do seu pet.</div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">6</span>
+        Qual é a espécie?
+      </div>
+      <div class="options-grid cols-2">
+        <div class="option-item" onclick="selecionar(this,'especie','Cão'); mostrarEspecie()">
+          <div class="option-circle"></div>
+          <span class="option-text">🐶  Cão</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'especie','Gato'); mostrarEspecie()">
+          <div class="option-circle"></div>
+          <span class="option-text">🐱  Gato</span>
+        </div>
+      </div>
+      <div class="error-msg" id="err-especie">Selecione a espécie do seu pet.</div>
+    </div>
+
+    <!-- CONDICIONAL: CÃO -->
+    <div class="condicional" id="cond-cao">
+      <div class="pergunta-card">
+        <div class="pergunta-label">
+          <span class="pergunta-num">7</span>
+          Qual é a raça? <span style="color:var(--muted);font-weight:300">&nbsp;(Cão)</span>
+        </div>
+        <div class="select-wrap">
+          <select id="raca_cao">
+            <option value="">Selecione a raça...</option>
+            <option>SRD / Vira-lata</option>
+            <option>Labrador</option>
+            <option>Golden Retriever</option>
+            <option>Bulldog Francês</option>
+            <option>Poodle</option>
+            <option>Shih Tzu</option>
+            <option>Yorkshire</option>
+            <option>Beagle</option>
+            <option>Pastor Alemão</option>
+            <option>Rottweiler</option>
+            <option>Lhasa Apso</option>
+            <option>Dachshund</option>
+            <option>Maltês</option>
+            <option>Pinscher</option>
+            <option>Border Collie</option>
+            <option>Husky Siberiano</option>
+            <option>Boxer</option>
+            <option>Outra raça</option>
+          </select>
+        </div>
+        <div class="divider"></div>
+        <div class="pergunta-label" style="margin-bottom:10px">
+          <span class="pergunta-num" style="background:transparent;color:var(--navy)">↳</span>
+          Qual é o porte?
+        </div>
+        <div class="options-grid cols-2">
+          <div class="option-item" onclick="selecionar(this,'porte','Pequeno')">
+            <div class="option-circle"></div>
+            <span class="option-text">Pequeno<br><small style="color:var(--muted)">até 10kg</small></span>
+          </div>
+          <div class="option-item" onclick="selecionar(this,'porte','Médio')">
+            <div class="option-circle"></div>
+            <span class="option-text">Médio<br><small style="color:var(--muted)">10–25kg</small></span>
+          </div>
+          <div class="option-item" onclick="selecionar(this,'porte','Grande')">
+            <div class="option-circle"></div>
+            <span class="option-text">Grande<br><small style="color:var(--muted)">25–45kg</small></span>
+          </div>
+          <div class="option-item" onclick="selecionar(this,'porte','Gigante')">
+            <div class="option-circle"></div>
+            <span class="option-text">Gigante<br><small style="color:var(--muted)">acima de 45kg</small></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONDICIONAL: GATO -->
+    <div class="condicional" id="cond-gato">
+      <div class="pergunta-card">
+        <div class="pergunta-label">
+          <span class="pergunta-num">7</span>
+          Qual é a raça? <span style="color:var(--muted);font-weight:300">&nbsp;(Gato)</span>
+        </div>
+        <div class="select-wrap">
+          <select id="raca_gato">
+            <option value="">Selecione a raça...</option>
+            <option>SRD / Vira-lata</option>
+            <option>Persa</option>
+            <option>Siamês</option>
+            <option>Maine Coon</option>
+            <option>Ragdoll</option>
+            <option>Bengal</option>
+            <option>Sphynx</option>
+            <option>British Shorthair</option>
+            <option>Angorá</option>
+            <option>Scottish Fold</option>
+            <option>Outra raça</option>
+          </select>
+        </div>
+        <div class="divider"></div>
+        <div class="pergunta-label" style="margin-bottom:10px">
+          <span class="pergunta-num" style="background:transparent;color:var(--navy)">↳</span>
+          Tipo de pelo?
+        </div>
+        <div class="options-grid">
+          <div class="option-item" onclick="selecionar(this,'tipo_pelo','Curto')">
+            <div class="option-circle"></div>
+            <span class="option-text">Pelo curto</span>
+          </div>
+          <div class="option-item" onclick="selecionar(this,'tipo_pelo','Longo')">
+            <div class="option-circle"></div>
+            <span class="option-text">Pelo longo</span>
+          </div>
+          <div class="option-item" onclick="selecionar(this,'tipo_pelo','Sem pelo')">
+            <div class="option-circle"></div>
+            <span class="option-text">Sem pelo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">8</span>
+        Qual é a data de nascimento?
+      </div>
+      <input type="date" id="data_nascimento" />
+      <div class="hint">📅 Se não sabe a data exata, coloque uma aproximada</div>
+      <div class="error-msg" id="err-data_nascimento">Informe a data de nascimento.</div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">9</span>
+        Qual é o sexo?
+      </div>
+      <div class="options-grid cols-2">
+        <div class="option-item" onclick="selecionar(this,'sexo','Macho')">
+          <div class="option-circle"></div>
+          <span class="option-text">♂ Macho</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'sexo','Fêmea')">
+          <div class="option-circle"></div>
+          <span class="option-text">♀ Fêmea</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">10</span>
+        É castrado(a)?
+      </div>
+      <div class="options-grid">
+        <div class="option-item" onclick="selecionar(this,'castrado','Sim')">
+          <div class="option-circle"></div>
+          <span class="option-text">Sim, já é castrado(a)</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'castrado','Não')">
+          <div class="option-circle"></div>
+          <span class="option-text">Não</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'castrado','Ainda não')">
+          <div class="option-circle"></div>
+          <span class="option-text">Ainda não — estamos planejando</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       ETAPA 3 — HISTÓRICO DE SAÚDE
+  ══════════════════════════════════════════ -->
+  <div class="etapa" id="etapa-3">
+    <div class="etapa-header">
+      <div class="etapa-badge">Etapa 03</div>
+      <div class="etapa-title">Histórico de saúde</div>
+      <div class="etapa-desc">Essas informações definem o ponto de partida do calendário personalizado.</div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">11</span>
+        As vacinas estão em dia?
+      </div>
+      <div class="options-grid">
+        <div class="option-item" onclick="selecionar(this,'vacinas_em_dia','Sim')">
+          <div class="option-circle"></div>
+          <span class="option-text">✅ Sim, todas em dia</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'vacinas_em_dia','Não')">
+          <div class="option-circle"></div>
+          <span class="option-text">❌ Não, estão atrasadas</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'vacinas_em_dia','Não sei')">
+          <div class="option-circle"></div>
+          <span class="option-text">🤔 Não sei ao certo</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">12</span>
+        Quando foi a última vermifugação?
+      </div>
+      <div class="options-grid">
+        <div class="option-item" onclick="selecionar(this,'ultima_vermifugacao','Menos de 3 meses')">
+          <div class="option-circle"></div>
+          <span class="option-text">Menos de 3 meses atrás</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'ultima_vermifugacao','3 a 6 meses')">
+          <div class="option-circle"></div>
+          <span class="option-text">Entre 3 e 6 meses atrás</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'ultima_vermifugacao','Mais de 6 meses')">
+          <div class="option-circle"></div>
+          <span class="option-text">Mais de 6 meses atrás</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'ultima_vermifugacao','Não sei')">
+          <div class="option-circle"></div>
+          <span class="option-text">Nunca fiz / Não sei</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">13</span>
+        Usa antiparasitário (antipulga / carrapato)?
+      </div>
+      <div class="options-grid">
+        <div class="option-item" onclick="selecionar(this,'antiparasitario','Sim, regularmente')">
+          <div class="option-circle"></div>
+          <span class="option-text">Sim, uso regularmente</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'antiparasitario','Às vezes')">
+          <div class="option-circle"></div>
+          <span class="option-text">Uso às vezes</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'antiparasitario','Não uso')">
+          <div class="option-circle"></div>
+          <span class="option-text">Não uso</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">14</span>
+        Tem alguma doença diagnosticada?
+      </div>
+      <div class="hint" style="margin-bottom:10px">Pode selecionar mais de uma</div>
+      <div class="options-grid" id="doencas-options">
+        <div class="option-item" onclick="toggleMulti(this,'doencas')">
+          <div class="option-square">✓</div>
+          <span class="option-text">Nenhuma</span>
+        </div>
+        <div class="option-item" onclick="toggleMulti(this,'doencas')">
+          <div class="option-square">✓</div>
+          <span class="option-text">Problema cardíaco</span>
+        </div>
+        <div class="option-item" onclick="toggleMulti(this,'doencas')">
+          <div class="option-square">✓</div>
+          <span class="option-text">Diabetes</span>
+        </div>
+        <div class="option-item" onclick="toggleMulti(this,'doencas')">
+          <div class="option-square">✓</div>
+          <span class="option-text">Doença renal</span>
+        </div>
+        <div class="option-item" onclick="toggleMulti(this,'doencas')">
+          <div class="option-square">✓</div>
+          <span class="option-text">Hipotireoidismo</span>
+        </div>
+        <div class="option-item" onclick="toggleMulti(this,'doencas')">
+          <div class="option-square">✓</div>
+          <span class="option-text">Displasia</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">15</span>
+        Tem alguma alergia conhecida?
+      </div>
+      <div class="options-grid">
+        <div class="option-item" onclick="selecionar(this,'alergias','Sim')">
+          <div class="option-circle"></div>
+          <span class="option-text">Sim</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'alergias','Não')">
+          <div class="option-circle"></div>
+          <span class="option-text">Não</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'alergias','Não sei')">
+          <div class="option-circle"></div>
+          <span class="option-text">Não sei</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       ETAPA 4 — ROTINA E ALIMENTAÇÃO
+  ══════════════════════════════════════════ -->
+  <div class="etapa" id="etapa-4">
+    <div class="etapa-header">
+      <div class="etapa-badge">Etapa 04</div>
+      <div class="etapa-title">Rotina e alimentação</div>
+      <div class="etapa-desc">Isso define o guia alimentar e os alertas de cuidados do dia a dia.</div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">16</span>
+        Como seu pet se alimenta?
+      </div>
+      <div class="options-grid">
+        <div class="option-item" onclick="selecionar(this,'alimentacao','Só ração')">
+          <div class="option-circle"></div>
+          <span class="option-text">Somente ração</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'alimentacao','Ração + natural')">
+          <div class="option-circle"></div>
+          <span class="option-text">Ração + alimentação natural</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'alimentacao','Só natural')">
+          <div class="option-circle"></div>
+          <span class="option-text">Somente alimentação natural</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'alimentacao','Outro')">
+          <div class="option-circle"></div>
+          <span class="option-text">Outro</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">17</span>
+        Onde seu pet vive?
+      </div>
+      <div class="options-grid">
+        <div class="option-item" onclick="selecionar(this,'ambiente','Apartamento')">
+          <div class="option-circle"></div>
+          <span class="option-text">🏢 Apartamento</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'ambiente','Casa com quintal')">
+          <div class="option-circle"></div>
+          <span class="option-text">🏡 Casa com quintal</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'ambiente','Casa sem quintal')">
+          <div class="option-circle"></div>
+          <span class="option-text">🏠 Casa sem quintal</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">18</span>
+        Tem acesso à rua?
+      </div>
+      <div class="options-grid">
+        <div class="option-item" onclick="selecionar(this,'acesso_rua','Sim, diariamente')">
+          <div class="option-circle"></div>
+          <span class="option-text">Sim, diariamente</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'acesso_rua','Às vezes')">
+          <div class="option-circle"></div>
+          <span class="option-text">Às vezes</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'acesso_rua','Não')">
+          <div class="option-circle"></div>
+          <span class="option-text">Não tem acesso à rua</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">19</span>
+        Tem contato com outros animais?
+      </div>
+      <div class="options-grid cols-2">
+        <div class="option-item" onclick="selecionar(this,'contato_animais','Sim')">
+          <div class="option-circle"></div>
+          <span class="option-text">Sim</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'contato_animais','Não')">
+          <div class="option-circle"></div>
+          <span class="option-text">Não</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       ETAPA 5 — VETERINÁRIO E PREFERÊNCIAS
+  ══════════════════════════════════════════ -->
+  <div class="etapa" id="etapa-5">
+    <div class="etapa-header">
+      <div class="etapa-badge">Etapa 05</div>
+      <div class="etapa-title">Últimas perguntas</div>
+      <div class="etapa-desc">Quase lá! Só precisamos saber sobre o veterinário e como prefere receber os alertas.</div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">20</span>
+        Tem veterinário fixo?
+      </div>
+      <div class="options-grid cols-2">
+        <div class="option-item" onclick="selecionar(this,'tem_vet','Sim')">
+          <div class="option-circle"></div>
+          <span class="option-text">Sim</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'tem_vet','Não')">
+          <div class="option-circle"></div>
+          <span class="option-text">Não</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">21</span>
+        Com que frequência vai ao veterinário?
+      </div>
+      <div class="options-grid">
+        <div class="option-item" onclick="selecionar(this,'freq_vet','A cada 6 meses')">
+          <div class="option-circle"></div>
+          <span class="option-text">A cada 6 meses</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'freq_vet','Uma vez por ano')">
+          <div class="option-circle"></div>
+          <span class="option-text">Uma vez por ano</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'freq_vet','Só quando adoece')">
+          <div class="option-circle"></div>
+          <span class="option-text">Somente quando adoece</span>
+        </div>
+        <div class="option-item" onclick="selecionar(this,'freq_vet','Nunca fui')">
+          <div class="option-circle"></div>
+          <span class="option-text">Nunca levei ao veterinário</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pergunta-card">
+      <div class="pergunta-label">
+        <span class="pergunta-num">22</span>
+        Como prefere receber os alertas mensais?
+      </div>
+      <div class="hint" style="margin-bottom:10px">Pode selecionar mais de um</div>
+      <div class="options-grid">
+        <div class="option-item" onclick="toggleMulti(this,'alerta_canal')">
+          <div class="option-square">✓</div>
+          <span class="option-text">💬 WhatsApp</span>
+        </div>
+        <div class="option-item" onclick="toggleMulti(this,'alerta_canal')">
+          <div class="option-square">✓</div>
+          <span class="option-text">📧 E-mail</span>
+        </div>
+      </div>
+      <div class="error-msg" id="err-alerta_canal">Selecione pelo menos um canal.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       TELA DE SUCESSO
+  ══════════════════════════════════════════ -->
+  <div class="sucesso" id="tela-sucesso">
+    <div class="sucesso-icon">🚢</div>
+    <div class="sucesso-title">Bem-vindo(a) à Porto Pet!</div>
+    <div class="sucesso-desc">O perfil de saúde do seu pet foi criado. Em instantes você receberá o calendário personalizado e o acesso à área de membros.</div>
+
+    <div class="sucesso-card">
+      <div class="sucesso-card-title">O que você vai receber</div>
+      <div class="sucesso-item"><span class="sucesso-check">✓</span> Perfil de saúde personalizado</div>
+      <div class="sucesso-item"><span class="sucesso-check">✓</span> Calendário anual de vacinas e cuidados</div>
+      <div class="sucesso-item"><span class="sucesso-check">✓</span> Guia alimentar baseado na rotina do seu pet</div>
+      <div class="sucesso-item"><span class="sucesso-check">✓</span> Checklist de sintomas de alerta</div>
+      <div class="sucesso-item"><span class="sucesso-check">✓</span> Alertas mensais personalizados</div>
+      <div class="sucesso-item"><span class="sucesso-check">✓</span> Acesso à comunidade fechada</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- BARRA DE NAVEGAÇÃO -->
+<div class="nav-bar" id="nav-bar">
+  <button class="btn btn-voltar" id="btn-voltar" onclick="voltar()" style="display:none">← Voltar</button>
+  <button class="btn btn-proximo" id="btn-proximo" onclick="proximo()">Próximo →</button>
+</div>
+
+<script>
+  // ─── ESTADO GLOBAL ──────────────────────────────────────
+  let etapaAtual = 1;
+  const totalEtapas = 5;
+  const dados = {};
+
+  const nomeEtapas = [
+    'Dados do tutor',
+    'Sobre o pet',
+    'Histórico de saúde',
+    'Rotina e alimentação',
+    'Veterinário'
+  ];
+
+  // ─── NAVEGAÇÃO ──────────────────────────────────────────
+  function proximo() {
+    if (!validarEtapa(etapaAtual)) return;
+
+    if (etapaAtual === totalEtapas) {
+      concluir();
+      return;
+    }
+
+    document.getElementById(`etapa-${etapaAtual}`).classList.remove('active');
+    etapaAtual++;
+    document.getElementById(`etapa-${etapaAtual}`).classList.add('active');
+    atualizarProgresso();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function voltar() {
+    if (etapaAtual === 1) return;
+    document.getElementById(`etapa-${etapaAtual}`).classList.remove('active');
+    etapaAtual--;
+    document.getElementById(`etapa-${etapaAtual}`).classList.add('active');
+    atualizarProgresso();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function atualizarProgresso() {
+    const pct = (etapaAtual / totalEtapas) * 100;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = `Etapa ${etapaAtual} de ${totalEtapas}`;
+    document.getElementById('progress-count').textContent = nomeEtapas[etapaAtual - 1];
+
+    for (let i = 1; i <= totalEtapas; i++) {
+      const dot = document.getElementById(`dot-${i}`);
+      dot.classList.remove('active', 'done');
+      if (i < etapaAtual) dot.classList.add('done');
+      else if (i === etapaAtual) dot.classList.add('active');
+    }
+
+    const btnVoltar = document.getElementById('btn-voltar');
+    const btnProximo = document.getElementById('btn-proximo');
+    btnVoltar.style.display = etapaAtual > 1 ? 'block' : 'none';
+    btnProximo.textContent = etapaAtual === totalEtapas ? 'Concluir ✓' : 'Próximo →';
+  }
+
+  // ─── SELEÇÃO SIMPLES (radio) ─────────────────────────────
+  function selecionar(el, campo, valor) {
+    const grupo = el.closest('.options-grid');
+    grupo.querySelectorAll('.option-item').forEach(i => i.classList.remove('selected'));
+    el.classList.add('selected');
+    dados[campo] = valor;
+    limparErro('err-' + campo);
+  }
+
+  // ─── SELEÇÃO MÚLTIPLA (checkbox) ────────────────────────
+  function toggleMulti(el, campo) {
+    el.classList.toggle('selected');
+    const selecionados = [];
+    el.closest('.options-grid').querySelectorAll('.option-item.selected').forEach(i => {
+      selecionados.push(i.querySelector('.option-text').textContent.trim());
+    });
+    dados[campo] = selecionados;
+    limparErro('err-' + campo);
+  }
+
+  // ─── LÓGICA CONDICIONAL ESPÉCIE ─────────────────────────
+  function mostrarEspecie() {
+    const esp = dados['especie'];
+    document.getElementById('cond-cao').classList.toggle('show', esp === 'Cão');
+    document.getElementById('cond-gato').classList.toggle('show', esp === 'Gato');
+  }
+
+  // ─── VALIDAÇÃO ──────────────────────────────────────────
+  function validarEtapa(n) {
+    let ok = true;
+
+    if (n === 1) {
+      const nome = document.getElementById('nome_completo').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const whats = document.getElementById('whatsapp').value.trim();
+      if (!nome) { mostrarErro('err-nome'); ok = false; }
+      else { dados.nome_completo = nome; }
+      if (!email || !email.includes('@')) { mostrarErro('err-email'); ok = false; }
+      else { dados.email = email; }
+      if (!whats) { mostrarErro('err-whatsapp'); ok = false; }
+      else { dados.whatsapp = whats; }
+      dados.cep = document.getElementById('cep').value.trim();
+    }
+
+    if (n === 2) {
+      const nomePet = document.getElementById('nome_pet').value.trim();
+      if (!nomePet) { mostrarErro('err-nome_pet'); ok = false; }
+      else { dados.nome_pet = nomePet; }
+      if (!dados.especie) { mostrarErro('err-especie'); ok = false; }
+      const dataN = document.getElementById('data_nascimento').value;
+      if (!dataN) { mostrarErro('err-data_nascimento'); ok = false; }
+      else {
+        dados.data_nascimento = dataN;
+        dados.fase_vida = calcularFaseVida(dataN);
+      }
+    }
+
+    if (n === 5) {
+      if (!dados.alerta_canal || dados.alerta_canal.length === 0) {
+        mostrarErro('err-alerta_canal'); ok = false;
+      }
+    }
+
+    return ok;
+  }
+
+  function calcularFaseVida(dataNasc) {
+    const nasc = new Date(dataNasc);
+    const hoje = new Date();
+    const meses = (hoje - nasc) / (1000 * 60 * 60 * 24 * 30);
+    if (meses < 12) return 'Filhote';
+    if (meses < 84) return 'Adulto';
+    return 'Idoso';
+  }
+
+  function mostrarErro(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('show');
+  }
+  function limparErro(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('show');
+  }
+
+  // ─── MÁSCARA CEP ────────────────────────────────────────
+  document.getElementById('cep').addEventListener('input', function() {
+    let v = this.value.replace(/\D/g, '');
+    if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5,8);
+    this.value = v;
+  });
+
+  // ─── MÁSCARA WHATSAPP ────────────────────────────────────
+  document.getElementById('whatsapp').addEventListener('input', function() {
+    let v = this.value.replace(/\D/g, '');
+    if (v.length > 2) v = '(' + v.slice(0,2) + ') ' + v.slice(2);
+    if (v.length > 10) v = v.slice(0,10) + '-' + v.slice(10,14);
+    this.value = v;
+  });
+
+  // ─── CONCLUIR ───────────────────────────────────────────
+  function concluir() {
+    // Coletar dados restantes
+    dados.raca = dados.especie === 'Cão'
+      ? document.getElementById('raca_cao').value
+      : document.getElementById('raca_gato').value;
+
+    console.log('Dados coletados:', dados);
+
+    // Esconder quiz e nav
+    document.querySelectorAll('.etapa').forEach(e => e.classList.remove('active'));
+    document.getElementById('nav-bar').style.display = 'none';
+    document.getElementById('tela-sucesso').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ─── INIT ───────────────────────────────────────────────
+  atualizarProgresso();
+</script>
+</body>
+</html>
